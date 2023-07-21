@@ -16,6 +16,10 @@ const bookSchema = new Schema<IBook>(
       type: String,
       required: true,
     },
+    imageLink: {
+      type: String,
+      required: true,
+    },
     publicationDate: {
       type: Date,
       required: true,

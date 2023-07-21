@@ -10,11 +10,10 @@ import { SortOrder } from "mongoose";
 
 const createBook = async (payload: IBook): Promise<IBook | null> => {
   // const createBook = await Book.create(payload);
-  const createBook = (await BookModel.create(payload)).populate("seller");
+  const createBook = await BookModel.create(payload);
   if (!createBook) {
     throw new Error("Failed to create Book Data!");
   }
-
   return createBook;
 };
 
