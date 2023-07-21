@@ -1,13 +1,15 @@
-import { Model, Schema, Types } from "mongoose";
+import { Model } from "mongoose";
 
 export type IBook = {
   id: number | string;
   author: string;
   title: string;
   genre: string;
-  publication_date: string;
+  userEmail: string;
+  publicationDate: Date | string;
   image_link: string;
   reviews?: string[];
+  publicationYear?: string;
 };
 
 export type IBookFilters = {

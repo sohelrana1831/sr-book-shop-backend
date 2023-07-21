@@ -1,55 +1,42 @@
 import ApiError from "../../../error/ApiError";
 import httpStatus from "http-status";
-import { ICow, ICowFilters } from "./bookInterface";
-import { Cow } from "./bookModel";
+import { IBook, IBookFilters } from "./bookInterface";
+import { BookModel } from "./bookModel";
 import { IPaginationOptions } from "../../../interface/pagination";
 import { IGenericResponse } from "../../../interface/common";
 import { paginationHelpers } from "../../../helpers/paginationHelpers";
-import { cowSearchableFields } from "./cowConstant";
+import { bookSearchableFields } from "./bookConstant";
 import { SortOrder } from "mongoose";
 
-const createCow = async (payload: ICow): Promise<ICow | null> => {
-  // const createCow = await Cow.create(payload);
-  const createCow = (await Cow.create(payload)).populate("seller");
-  if (!createCow) {
-    throw new Error("Failed to create Cow Data!");
+const createBook = async (payload: IBook): Promise<IBook | null> => {
+  // const createBook = await Book.create(payload);
+  const createBook = (await BookModel.create(payload)).populate("seller");
+  if (!createBook) {
+    throw new Error("Failed to create Book Data!");
   }
 
-  return createCow;
+  return createBook;
 };
 
-// const getAllCows = async (): Promise<ICow[]> => {
-//   const result = await Cow.find({});
-//   return result;
-// };
-
-const getAllCows = async (
-  filters: ICowFilters,
+const getAllBook = async (
+  filters: IBookFilters,
   paginationOptions: IPaginationOptions
-): Promise<IGenericResponse<ICow[]>> => {
-  const { searchTerm, minPrice, maxPrice, ...filtersData } = filters;
+): Promise<IGenericResponse<IBook[]>> => {
+  const { searchTerm, genre, publicationYear, ...filtersData } = filters;
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
 
-  const andConditions = [];
+  const andConditions = [] as Array<{ [key: string]: any }>;
+  // or const andConditions = [] as Array<{ [key: string]: any }>;
 
   if (searchTerm) {
     andConditions.push({
-      $or: cowSearchableFields.map((field) => ({
+      $or: bookSearchableFields.map((field) => ({
         [field]: {
           $regex: searchTerm,
           $options: "i",
         },
       })),
-    });
-  }
-
-  if (minPrice !== undefined && maxPrice !== undefined) {
-    andConditions.push({
-      price: {
-        $gte: minPrice,
-        $lte: maxPrice,
-      },
     });
   }
 
@@ -75,12 +62,12 @@ const getAllCows = async (
   const whereConditions =
     andConditions.length > 0 ? { $and: andConditions } : {};
 
-  const result = await Cow.find(whereConditions)
+  const result = await BookModel.find(whereConditions)
     .sort(sortConditions)
     .skip(skip)
     .limit(limit);
 
-  const total = await Cow.countDocuments(whereConditions);
+  const total = await BookModel.countDocuments(whereConditions);
 
   return {
     meta: {
@@ -92,23 +79,23 @@ const getAllCows = async (
   };
 };
 
-const getSingleCow = async (id: string): Promise<ICow | null> => {
-  const result = await Cow.findById(id);
+const getSingleBook = async (id: string): Promise<IBook | null> => {
+  const result = await BookModel.findById(id);
   return result;
 };
 
-const updateCow = async (
+const updateBook = async (
   id: string,
-  payload: Partial<ICow>
-): Promise<ICow | null> => {
-  const result = await Cow.findOneAndUpdate({ _id: id }, payload, {
+  payload: Partial<IBook>
+): Promise<IBook | null> => {
+  const result = await BookModel.findOneAndUpdate({ _id: id }, payload, {
     new: true,
   });
   return result;
 };
 
-const deleteCow = async (id: string): Promise<ICow | null> => {
-  const result = await Cow.findByIdAndDelete({ _id: id });
+const deleteBook = async (id: string): Promise<IBook | null> => {
+  const result = await BookModel.findByIdAndDelete({ _id: id });
   if (result) {
     return result;
   } else {
@@ -116,10 +103,10 @@ const deleteCow = async (id: string): Promise<ICow | null> => {
   }
 };
 
-export const CowServices = {
-  createCow,
-  getAllCows,
-  getSingleCow,
-  updateCow,
-  deleteCow,
+export const BookServices = {
+  createBook,
+  getAllBook,
+  getSingleBook,
+  updateBook,
+  deleteBook,
 };

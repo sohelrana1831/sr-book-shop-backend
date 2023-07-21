@@ -1,50 +1,41 @@
-import mongoose, { Schema, model } from "mongoose";
-import { BookModel, ICow } from "./bookInterface";
+import { Schema, Types, model } from "mongoose";
+import { IBook } from "./bookInterface";
 
-const cowSchema = new Schema<ICow>(
+const bookSchema = new Schema<IBook>(
   {
-    name: { type: String, required: true },
-    age: { type: Number, required: true },
-    price: { type: Number, required: true },
-    location: {
+    title: {
       type: String,
-      enum: [
-        "Dhaka",
-        "Chattogram",
-        "Barishal",
-        "Rajshahi",
-        "Sylhet",
-        "Comilla",
-        "Rangpur",
-        "Mymensingh",
-      ],
+      required: true,
+      unique: true,
+    },
+    author: {
+      type: String,
       required: true,
     },
-    breed: {
+    genre: {
       type: String,
-      enum: [
-        "Brahman",
-        "Nellore",
-        "Sahiwal",
-        "Gir",
-        "Indigenous",
-        "Tharparkar",
-        "Kankrej",
-      ],
       required: true,
     },
-    weight: { type: Number, required: true },
-    label: {
-      type: String,
-      enum: ["for sale", "sold out"],
-      default: "for sale",
-    },
-    category: { type: String, enum: ["Dairy", "Beef", "Dual Purpose"] },
-    seller: {
-      type: Schema.Types.ObjectId, // academicSemester --> _id
-      ref: "User",
+    publicationDate: {
+      type: Date,
       required: true,
     },
+    publicationYear: {
+      type: String,
+      required: true,
+    },
+    userEmail: {
+      type: String,
+      required: true,
+    },
+    reviews: [
+      {
+        review: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
@@ -54,4 +45,4 @@ const cowSchema = new Schema<ICow>(
   }
 );
 
-export const Cow = model<ICow, BookModel>("Cow", cowSchema);
+export const BookModel = model<IBook>("Book", bookSchema);

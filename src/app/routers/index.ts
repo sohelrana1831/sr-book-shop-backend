@@ -1,11 +1,11 @@
 import express from "express";
-import { AuthRouters } from "../modules/auth/authRouters";
+import { BookRouters } from "../module/book/bookRouters";
 const router = express.Router();
 
 const modulesRouters = [
   {
-    pathName: "/auth",
-    routeName: AuthRouters,
+    pathName: "/book",
+    routeName: BookRouters,
   },
 ];
 modulesRouters.forEach((route) => router.use(route.pathName, route.routeName));
