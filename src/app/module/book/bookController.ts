@@ -22,7 +22,6 @@ const createBook: RequestHandler = catchAsync(async (req, res) => {
 const getAllBook = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, bookFilterableFields);
   const paginationOptions = pick(req.query, paginationFieldOptions);
-
   const result = await BookServices.getAllBook(filters, paginationOptions);
 
   sendResponse<IBook[]>(res, {
@@ -59,6 +58,19 @@ const updateBook: RequestHandler = catchAsync(async (req, res) => {
   });
 });
 
+const reviewBook: RequestHandler = catchAsync(async (req, res) => {
+  const id = req.params.id;
+  const book = req.body;
+  const result = await BookServices.reviewBook(id, book);
+
+  sendResponse<IBook>(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Review add successfully",
+    data: result,
+  });
+});
+
 const deleteBook: RequestHandler = catchAsync(async (req, res) => {
   const id = req.params.id;
   const result = await BookServices.deleteBook(id);
@@ -77,4 +89,5 @@ export const BookController = {
   getSingleBook,
   updateBook,
   deleteBook,
+  reviewBook,
 };

@@ -38,6 +38,10 @@ const bookSchema = new Schema<IBook>(
           type: String,
           required: true,
         },
+        reviewBy: {
+          type: String,
+          required: true,
+        },
       },
     ],
   },

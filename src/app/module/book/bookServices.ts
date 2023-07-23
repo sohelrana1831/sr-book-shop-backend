@@ -1,6 +1,6 @@
 import ApiError from "../../../error/ApiError";
 import httpStatus from "http-status";
-import { IBook, IBookFilters } from "./bookInterface";
+import { IBook, IBookFilters, IReview } from "./bookInterface";
 import { BookModel } from "./bookModel";
 import { IPaginationOptions } from "../../../interface/pagination";
 import { IGenericResponse } from "../../../interface/common";
@@ -21,7 +21,7 @@ const getAllBook = async (
   filters: IBookFilters,
   paginationOptions: IPaginationOptions
 ): Promise<IGenericResponse<IBook[]>> => {
-  const { searchTerm, genre, publicationYear, ...filtersData } = filters;
+  const { searchTerm, ...filtersData } = filters;
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
 
@@ -38,7 +38,6 @@ const getAllBook = async (
       })),
     });
   }
-
   if (Object.keys(filtersData).length) {
     andConditions.push({
       $and: Object.entries(filtersData).map(([field, value]) => {
@@ -92,6 +91,28 @@ const updateBook = async (
   });
   return result;
 };
+const reviewBook = async (
+  id: string,
+  payload: Partial<IReview>
+): Promise<IBook | null> => {
+  const isExist = await BookModel.findById(id);
+
+  if (!isExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Book do not exist!");
+  }
+  const result = await BookModel.findByIdAndUpdate(
+    id,
+    {
+      $push: {
+        reviews: payload,
+      },
+    },
+    {
+      new: true,
+    }
+  );
+  return result;
+};
 
 const deleteBook = async (id: string): Promise<IBook | null> => {
   const result = await BookModel.findByIdAndDelete({ _id: id });
@@ -108,4 +129,5 @@ export const BookServices = {
   getSingleBook,
   updateBook,
   deleteBook,
+  reviewBook,
 };

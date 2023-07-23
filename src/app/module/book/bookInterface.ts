@@ -12,6 +12,11 @@ export type IBook = {
   publicationYear?: string;
 };
 
+export type IReview = {
+  review: string;
+  reviewBy: string;
+};
+
 export type IBookFilters = {
   searchTerm?: string;
   genre?: string;
